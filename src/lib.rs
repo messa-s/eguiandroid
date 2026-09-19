@@ -1,11 +1,11 @@
 use eframe::egui;
 
 #[derive(Default)]
-struct App {}
+pub struct App {}
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ui, |ui| {
             ui.heading("Hello Application");
         });
     }
