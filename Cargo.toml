@@ -4,6 +4,12 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
 
+[profile.dev]
+opt-level = 0
+incremental = true
+#debug = 0       
+split-debuginfo = "unpacked"
+
 # cdylib is required for Android, lib is required for desktop
 [lib]
 crate-type = ["cdylib", "lib"]
