@@ -1,0 +1,26 @@
+[package]
+name = "eguiandroid"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+
+# cdylib is required for Android, lib is required for desktop
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+eframe = { version = "0.36.2", default-features = false, features = [
+  "default_fonts",
+  "glow",
+  "android-native-activity",
+] }
+winit = { version = "0.30.13", default-features = false }
+android_logger = "0.15.1"
+log = { version = "0.4.34", features = ["std"] }
+
+[package.metadata.android]
+build_targets = ["armv7-linux-androideabi", "aarch64-linux-android"]
+
+[package.metadata.android.sdk]
+min_sdk_version = 23
+target_sdk_version = 35

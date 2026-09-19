@@ -1,0 +1,58 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: armv7-linux-androideabi,aarch64-linux-android
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      # The runner image already ships the Android SDK and NDK.
+      # Just point cargo-apk at them.
+      - name: Set up Android env
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$ANDROID_NDK_LATEST_HOME" >> $GITHUB_ENV
+          echo "SDK: $ANDROID_HOME"
+          echo "NDK: $ANDROID_NDK_LATEST_HOME"
+          ls "$ANDROID_HOME/platforms" "$ANDROID_HOME/build-tools"
+
+      # Cache the cargo-apk binary so it isn't recompiled every run
+      - name: Cache cargo-apk
+        id: cargo-apk-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-apk
+          key: cargo-apk-282639508eeed7d73f2e1eaeea042da2716436d5
+
+      - name: Install cargo-apk
+        if: steps.cargo-apk-cache.outputs.cache-hit != 'true'
+        run: >
+          cargo install
+          --git https://github.com/parasyte/cargo-apk.git
+          --rev 282639508eeed7d73f2e1eaeea042da2716436d5
+          cargo-apk
+
+      - name: Build APK
+        run: cargo apk build --lib
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: eguiandroid-apk
+          path: target/debug/apk/eguiandroid.apk
