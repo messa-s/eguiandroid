@@ -24,3 +24,6 @@ build_targets = ["armv7-linux-androideabi", "aarch64-linux-android"]
 [package.metadata.android.sdk]
 min_sdk_version = 23
 target_sdk_version = 35
+
+[[package.metadata.android.uses_permission]]
+name = "android.permission.MANAGE_EXTERNAL_STORAGE"
